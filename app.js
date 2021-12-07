@@ -10,8 +10,8 @@ const cookieParser = require('cookie-parser')
 const connectDB = require('./db/connect')
 
 // routers
-const authRoutes = require('./routes/authRoutes')
-
+const authRouter = require('./routes/authRoutes')
+const userRouter = require('./routes/userRoutes')
 // middleware
 const notFoundMiddleware = require('./middlewares/not-found')
 const errorHandlerMiddleware = require('./middlewares/error-handler')
@@ -30,7 +30,8 @@ app.get('/api/v1', (req, res) => {
   console.log(req.signedCookies)
   res.send('mnest-api')
 })
-app.use('/api/v1/auth', authRoutes)
+app.use('/api/v1/auth', authRouter)
+app.use('/api/v1/users', userRouter)
 app.use(notFoundMiddleware)
 app.use(errorHandlerMiddleware)
 
