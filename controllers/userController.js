@@ -1,7 +1,11 @@
 const User = require('../models/User')
 const { StatusCodes } = require('http-status-codes')
 const CustomError = require('../errors')
-const { createTokenUser, attachCookiesToResponse } = require('../utils')
+const {
+  createTokenUser,
+  attachCookiesToResponse,
+  checkPermissions,
+} = require('../utils')
 const getAllUsers = async (req, res) => {
   console.log(req.user)
   const users = await User.find({ role: 'user' }).select('-password')
@@ -13,6 +17,7 @@ const getSingleUser = async (req, res) => {
   if (!user) {
     throw new CustomError.BadRequestError(`No user with id ${req.params.id}`)
   }
+  checkPermissions(req.user, user._id)
   res.status(StatusCodes.OK).json({ user })
 }
 
@@ -34,6 +39,7 @@ const updateUser = async (req, res) => {
   attachCookiesToResponse({ res, user: tokenUser })
   res.status(StatusCodes.OK).json({ user: tokenUser })
 }
+
 const updateUserPassword = async (req, res) => {
   const { oldPassword, newPassword } = req.body
   if (!oldPassword || !newPassword) {
